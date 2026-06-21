@@ -1,5 +1,3 @@
-# src/sampling.py
-
 import pandas as pd
 
 TARGET_SIZE = 12000
@@ -7,18 +5,25 @@ RANDOM_STATE = 42
 
 
 def create_stratified_sample(
-    input_path="data/filtered_complaints.csv",
-    output_path="data/sample_complaints.csv",
+    input_path="data/processed/filtered_complaints.csv",
+    output_path="data/processed/sample_complaints.csv",
 ):
+
     df = pd.read_csv(input_path)
 
+    print("Original shape:", df.shape)
+
     sample_df = (
-        df.groupby("product", group_keys=False)
+        df.groupby("Product", group_keys=False)
         .apply(
             lambda x: x.sample(
                 n=max(
                     1,
-                    round(len(x) / len(df) * TARGET_SIZE)
+                    round(
+                        len(x)
+                        / len(df)
+                        * TARGET_SIZE
+                    )
                 ),
                 random_state=RANDOM_STATE,
             )
@@ -28,7 +33,7 @@ def create_stratified_sample(
 
     sample_df.to_csv(output_path, index=False)
 
-    print(f"Sample size: {len(sample_df)}")
+    print("Sample shape:", sample_df.shape)
 
     return sample_df
 
